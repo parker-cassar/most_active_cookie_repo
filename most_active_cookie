@@ -7,11 +7,11 @@ from datetime import date, datetime
 from typing import Iterator, TextIO
 
 
-def build_parser() -> argparse.ArgumentParser:
+def get_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Most active cookie")
     parser.add_argument("cookie_log", help="Path to cookie log CSV file")
     parser.add_argument("-d", "--date", required=True, type=date.fromisoformat, help="Date to find most active cookies for")
-    return parser
+    return parser.parse_args()
 
 def str_to_date(timestamp: str) -> date:
     return datetime.fromisoformat(timestamp).date()
@@ -36,7 +36,7 @@ def get_reader(file: TextIO) -> Iterator[list[str]]:
     return reader 
 
 def main() -> int:
-    args = build_parser().parse_args()
+    args = get_args()
     with open(args.cookie_log, 'r') as file:
         reader = get_reader(file)
         active_cookies = get_most_active_cookies(reader, args.date)
