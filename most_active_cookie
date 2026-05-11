@@ -20,6 +20,7 @@ def get_most_active_cookies(cookie_log_reader: Iterator[list[str]], valid_date: 
     cookie_counter = Counter()
     for cookie, timestamp in cookie_log_reader:
         current_date = str_to_date(timestamp)
+        # Log is sorted newest-first; stop once we pass the target date
         if current_date < valid_date:
             break
         elif current_date == valid_date:
