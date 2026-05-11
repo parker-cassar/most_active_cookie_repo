@@ -2,11 +2,10 @@
 
 import argparse
 import csv
-import time
-from bisect import bisect_left, bisect_right
 from collections import Counter
 from datetime import date, datetime
 from typing import Iterator, TextIO
+
 
 def _parse_utc_date(date_str: str) -> date:
     try:
@@ -19,13 +18,13 @@ def _parse_utc_date(date_str: str) -> date:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Most active cookie")
     parser.add_argument("cookie_log", help="Path to cookie log CSV file")
-    parser.add_argument("-d", "--date", required=True, type=_parse_utc_date)
+    parser.add_argument("-d", "--date", required=True, type=_parse_utc_date, help="Date to find most active cookies for")
     return parser
 
 def str_to_date(timestamp: str) -> date:
     return datetime.fromisoformat(timestamp).date()
 
-def get_most_active_cookies(cookie_log_reader : Iterator[list[str]], valid_date : date) -> list[str]:
+def get_most_active_cookies(cookie_log_reader: Iterator[list[str]], valid_date: date) -> list[str]:
     cookie_counter = Counter()
     for cookie, timestamp in cookie_log_reader:
         current_date = str_to_date(timestamp)
@@ -38,19 +37,19 @@ def get_most_active_cookies(cookie_log_reader : Iterator[list[str]], valid_date 
     valid_cookies = [cookie for cookie, cnt in cookie_counter.items() if cnt == max_count]
     return valid_cookies
 
-def get_reader(file : TextIO) -> Iterator[list[str]]:
+def get_reader(file: TextIO) -> Iterator[list[str]]:
     reader = csv.reader(file)
-    header = next(reader) # skip header (assume the file is not empty)
+    next(reader, None)  # skip header; None if file is empty
     return reader 
 
-def main():
+def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
     with open(args.cookie_log, 'r') as file:
         reader = get_reader(file)
         active_cookies = get_most_active_cookies(reader, args.date)
-        output = "\n".join(active_cookies) if active_cookies else f"No cookies on {args.date}"
-    print(output)
+        output = "\n".join(active_cookies)
+    print(output, end="")
     return 0
 
 if __name__ == "__main__":

@@ -1,3 +1,5 @@
+# ruff: noqa
+
 from bisect import bisect_left, bisect_right
 from datetime import datetime
 from typing import Iterator
