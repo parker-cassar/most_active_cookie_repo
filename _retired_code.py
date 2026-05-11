@@ -13,3 +13,9 @@ def get_day_cookies_bin_search(cookie_log_reader : Iterator[list[str]], date : d
 
     valid_cookies_desc_order = cookies[first_valid_index : last_valid_index + 1][::-1]
     return valid_cookies_desc_order
+
+def get_day_cookies(cookie_log_reader : Iterator[list[str]], date : datetime.date, testing=False) -> list[str]:
+    if not testing:
+        return get_day_cookies_linear_scan_stop_early(cookie_log_reader, date)
+    
+    # testing code here

@@ -25,14 +25,14 @@ def _parse_utc_date(date_str: str) -> date:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Most active cookie")
-    parser.add_argument("cookie_log", required=True, help="Path to cookie log CSV file")
+    parser.add_argument("cookie_log", help="Path to cookie log CSV file")
     parser.add_argument("-d", "--date", required=True, type=_parse_utc_date)
     return parser
 
 def str_to_date(timestamp: str) -> date:
     return datetime.fromisoformat(timestamp).date()
 
-def get_day_cookies_linear_scan_stop_early(cookie_log_reader : Iterator[list[str]], valid_date : date) -> list[str]:
+def get_day_cookies(cookie_log_reader : Iterator[list[str]], valid_date : date) -> list[str]:
     cookie_counter = Counter()
     for cookie, timestamp in cookie_log_reader:
         current_date = str_to_date(timestamp)
@@ -44,13 +44,6 @@ def get_day_cookies_linear_scan_stop_early(cookie_log_reader : Iterator[list[str
     max_count = max(cookie_counter.values(), default=0)
     valid_cookies = [cookie for cookie, cnt in cookie_counter.items() if cnt == max_count]
     return valid_cookies
-    
-def get_day_cookies(cookie_log_reader : Iterator[list[str]], date : datetime.date, testing=False) -> list[str]:
-    if not testing:
-        return get_day_cookies_linear_scan_stop_early(cookie_log_reader, date)
-    
-    # testing code here
-
 
 def get_reader(file : TextIO) -> Iterator[list[str]]:
     reader = csv.reader(file)
@@ -60,13 +53,12 @@ def get_reader(file : TextIO) -> Iterator[list[str]]:
 def main():
     parser = build_parser()
     args = parser.parse_args()
-    print(f"args: {args}")
     with open(args.cookie_log, 'r') as file:
         reader = get_reader(file)
         active_cookies = get_day_cookies(reader, args.date)
         output = "\n".join(active_cookies) if active_cookies else f"No cookies on {args.date}"
     print(output)
+    return 0
 
 if __name__ == "__main__":
-    # raise SystemExit(main())
-    main()
+    raise SystemExit(main())
