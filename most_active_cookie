@@ -7,18 +7,10 @@ from datetime import date, datetime
 from typing import Iterator, TextIO
 
 
-def _parse_utc_date(date_str: str) -> date:
-    try:
-        return date.fromisoformat(date_str)  # expects YYYY-MM-DD[time+offeset]
-    except ValueError as exc:
-        raise argparse.ArgumentTypeError(
-            f"Invalid date '{date_str}'. Expected format: YYYY-MM-DD or YYYY-MM-DD[time][offset]"
-        ) from exc
-
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Most active cookie")
     parser.add_argument("cookie_log", help="Path to cookie log CSV file")
-    parser.add_argument("-d", "--date", required=True, type=_parse_utc_date, help="Date to find most active cookies for")
+    parser.add_argument("-d", "--date", required=True, type=date.fromisoformat, help="Date to find most active cookies for")
     return parser
 
 def str_to_date(timestamp: str) -> date:
@@ -43,8 +35,7 @@ def get_reader(file: TextIO) -> Iterator[list[str]]:
     return reader 
 
 def main() -> int:
-    parser = build_parser()
-    args = parser.parse_args()
+    args = build_parser().parse_args()
     with open(args.cookie_log, 'r') as file:
         reader = get_reader(file)
         active_cookies = get_most_active_cookies(reader, args.date)
