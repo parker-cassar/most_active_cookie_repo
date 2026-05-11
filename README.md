@@ -1,5 +1,3 @@
-# most_active_cookie
-
 A Python CLI for finding the most active cookie(s) on a given UTC date from a cookie log CSV.
 
 ## Quick Start
