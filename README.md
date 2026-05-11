@@ -1,23 +1,6 @@
-# Most Active Cookie
+# most_active_cookie
 
-Small Python CLI for finding the most active cookie(s) on a given UTC date from a cookie log CSV.
-
-## Problem
-
-Given a CSV file in this format (sorted in descending timestamp order):
-
-```csv
-cookie,timestamp
-AtY0laUfhglK3lC7,2018-12-09T14:19:00+00:00
-SAZuXPGUrfbcn5UA,2018-12-09T10:13:00+00:00
-...
-
-cookie: cookie identifier (treated as an opaque string)
-timestamp: ISO 8601 datetime string with UTC offset (for example, 2018-12-09T14:19:00+00:00)
-
-Return the cookie(s) that appear most often for a requested day.
-
-If there is a tie, print all tied cookies, one per line. Program prints cookies in first timestamp ascending order.
+A Python CLI for finding the most active cookie(s) on a given UTC date from a cookie log CSV.
 
 ## Quick Start
 
@@ -43,6 +26,29 @@ If needed, make the script executable:
 chmod +x most_active_cookie
 ```
 
+## Input / Output
+
+Command:
+
+```bash
+./most_active_cookie <cookie_log.csv> -d <YYYY-MM-DD>
+```
+
+Input contract:
+
+- CSV rows are expected in descending timestamp order (newest first).
+- Header is expected as `cookie,timestamp`.
+- `cookie` is treated as an opaque string.
+- `timestamp` is expected to be ISO 8601 (for example `2018-12-09T14:19:00+00:00`).
+- `-d` is interpreted as a UTC date.
+
+Output contract:
+
+- Prints the most active cookie(s) for the requested date to stdout.
+- If multiple cookies tie for max count, prints all tied cookies, one per line.
+- Tie order follows first-seen order in the file for that date.
+- Prints nothing when there are no rows for the requested date.
+
 ## Testing
 
 Run:
@@ -60,7 +66,22 @@ Current test coverage validates:
 - files without extension
 - empty file without header
 
-## Design Notes
+Adding new tests:
+
+- Add a CSV fixture under `tests/csv_fixtures/`.
+- Keep fixture rows in descending timestamp order to match runtime assumptions.
+- Reuse the same two-column shape used by current fixtures: `cookie,timestamp`.
+- Add a tuple to `TEST_CASES_VALID_CSV_INPUT` in `tests/test_most_active_cookie.py`:
+  - `(fixture_path, date_arg, expected_stdout)`
+- Format `expected_stdout` exactly as the CLI prints it (newline-separated values, no trailing newline).
+
+Example:
+
+```python
+(f"{tf}/my_case.csv", "2018-12-09", "cookieA\ncookieB")
+```
+
+## Design
 
 - `build_parser()` isolates command line parsing concerns.
 - `get_reader()` encapsulates CSV header handling.
@@ -76,10 +97,10 @@ Current test coverage validates:
 - `tests/test_most_active_cookie.py` - Command line integration-style tests
 - `tests/csv_fixtures/` - fixture files covering normal and edge scenarios
 
-## Extension Ideas
+## Potential Extensions
 
-Potential enhancements:
-
+- optimize for repeated queries on the same dataset (e.g. ingest into SQLite with an index on the timestamp's date)
+- optimize for very large files on a single query (e.g. binary-search the start of the target date, since input is sorted descending by timestamp)
 - strict CSV schema validation and explicit error reporting for malformed rows
 - optional tie ordering mode (for example alphabetic sort) for stable output
 - configurable handling for malformed rows (skip with warning or fail fast)
