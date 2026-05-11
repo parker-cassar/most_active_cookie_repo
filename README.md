@@ -57,12 +57,11 @@ pytest -q
 
 Current test coverage validates:
 
-- canonical prompt example behavior
-- tie handling
-- single-row input
-- empty file behavior
-- files without extension
-- empty file without header
+- Various prompts on different CSVs
+- Tie handling
+- Single-row CSV files
+- CSV Files without extension
+- Empty CSV file
 
 Adding new tests:
 
@@ -97,9 +96,8 @@ Example:
 
 ## Potential Extensions
 
-- optimize for repeated queries on the same dataset (e.g. ingest into SQLite with an index on the timestamp's date)
-- optimize for very large files on a single query (e.g. binary-search the start of the target date, since input is sorted descending by timestamp)
-- strict CSV schema validation and explicit error reporting for malformed rows
-- optional tie ordering mode (for example alphabetic sort) for stable output
-- configurable handling for malformed rows (skip with warning or fail fast)
-- explicit exit code mapping for argument errors, file I/O errors and malformed input rows
+- Optimize for repeated queries on the same dataset (e.g. ingest into SQLite with an index on the timestamp's date)
+- Optimize for very large files on a single query (e.g. binary-search the start of the target date, since input is sorted descending by timestamp)
+- Strict CSV schema validation and explicit error reporting for malformed rows
+- Configurable handling for malformed rows (skip with warning or fail fast)
+- Explicit exit code mapping for argument errors, file I/O errors and malformed input rows
