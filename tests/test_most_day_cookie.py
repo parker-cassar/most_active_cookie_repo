@@ -12,30 +12,30 @@ MOST_DAY_COOOKIE_SCRIPT = PROJECT_DIR / "most_day_cookie"
     (
         "tests/csv_fixtures/cookie_log.csv",
         "2018-12-08",
-        "['SAZuXPGUrfbcn5UA', '4sMM2LxV07bPJzwf', 'fbcn5UAVanZf6UtG']\nSAZuXPGUrfbcn5UA\n4sMM2LxV07bPJzwf\nfbcn5UAVanZf6UtG\n",
+        "SAZuXPGUrfbcn5UA\n4sMM2LxV07bPJzwf\nfbcn5UAVanZf6UtG\n",
     ),
     (
         "tests/csv_fixtures/cookie_log.csv",
         "2018-12-09",
-        "['AtY0laUfhglK3lC7']\nAtY0laUfhglK3lC7\n",
+        "AtY0laUfhglK3lC7\n",
     ),
     (
         "tests/csv_fixtures/all_one_day.csv",
         "2018-12-09",
-        "['LpQ3uD7fZk2mWxNt']\nLpQ3uD7fZk2mWxNt\n",
+        "LpQ3uD7fZk2mWxNt\n",
     ),
     (
         "tests/csv_fixtures/all_tied_one_day.csv",
         "2018-12-08",
-        "['Tz7rBnGk4mVxLqP2', '3HjZcA8fDb6WuNpQ', 'mK9vXqR2nPwL5sYt']\nTz7rBnGk4mVxLqP2\n3HjZcA8fDb6WuNpQ\nmK9vXqR2nPwL5sYt\n",
+        "Tz7rBnGk4mVxLqP2\n3HjZcA8fDb6WuNpQ\nmK9vXqR2nPwL5sYt\n",
     ),
     (
         "tests/csv_fixtures/one_row.csv",
         "2018-12-09",
-        "['5UAVanZf6UtGyKVS']\n5UAVanZf6UtGyKVS\n",
+        "5UAVanZf6UtGyKVS\n",
     ),
-    ("tests/csv_fixtures/empty.csv", "2018-12-09", "[]\nNo cookies on 2018-12-09\n"),
-    ("tests/csv_fixtures/empty_untyped", "2018-12-09", "[]\nNo cookies on 2018-12-09\n"),
+    ("tests/csv_fixtures/empty.csv", "2018-12-09", "No cookies on 2018-12-09\n"),
+    ("tests/csv_fixtures/empty_untyped", "2018-12-09", "No cookies on 2018-12-09\n"),
 ])
 def test_cli_returns_most_active(fixture, date, expected):
     completed_process = subprocess.run([str(MOST_DAY_COOOKIE_SCRIPT), fixture, "-d", date], capture_output=True, text=True)
