@@ -1,0 +1,69 @@
+#!/usr/bin/env python3
+
+import argparse
+import csv
+import time
+from bisect import bisect_left, bisect_right
+from collections import Counter
+from datetime import datetime
+from typing import Iterator, TextIO
+
+parser = argparse.ArgumentParser(description="Most active cookie")
+parser.add_argument("cookie_log", help="Cookie log file") # Positional
+parser.add_argument("-d", "--date", help="Date") # Flag
+
+args = parser.parse_args()
+# print(f"Hello {args.cookie_log} {args.date}")
+
+str_to_date = lambda s: datetime.fromisoformat(s).date()
+
+""" 
+Assumes cookie log is sorted by timestamp descending
+    since im using bisect_left i revese
+Assumes we have enough space 
+"""
+def get_day_cookies_bin_search(cookie_log_reader : Iterator[list[str]], date : datetime.date) -> list[str]:
+    next(cookie_log_reader) # skip header line
+    cookie_dates_asc_order = [col[::-1] for col in zip(*cookie_log_reader)]
+    cookies, dates = cookie_dates_asc_order
+    
+    str_to_date = lambda s: datetime.fromisoformat(s).date()
+    first_valid_index = bisect_left(dates, date, key=lambda d: str_to_date(d))
+    last_valid_index = bisect_right(dates, date, key=lambda d: str_to_date(d), lo=first_valid_index) - 1
+
+    valid_cookies_desc_order = cookies[first_valid_index : last_valid_index + 1][::-1]
+    return valid_cookies_desc_order
+
+
+def get_day_cookies_linear_scan(cookie_log_reader : Iterator[list[str]], valid_date : datetime.date) -> list[str]:
+    cookie_counter = Counter()
+    for cookie, timestamp in cookie_log_reader:
+        current_date = str_to_date(timestamp)
+        if current_date < valid_date:
+            break
+        elif current_date == valid_date:
+            cookie_counter[cookie] += 1
+    
+    valid_cookies = [cookie for cookie, cnt in cookie_counter.items() if cnt == max(cookie_counter.values())]
+    return valid_cookies
+    
+def get_day_cookies(cookie_log_reader : Iterator[list[str]], date : datetime.date, testing=False) -> list[str]:
+    if not testing:
+        return get_day_cookies_linear_scan(cookie_log_reader, date)
+    
+    # testing code here
+
+def get_reader(file : TextIO) -> Iterator[list[str]]:
+    reader = csv.reader(file)
+    next(reader) # skip header
+    return reader 
+
+# be able "$ ./most_day_cookie cookie_log.csv -d 2018-12-08"
+with open(args.cookie_log, 'r') as file:
+    reader = get_reader(file)
+    date_input = str_to_date(args.date)
+
+    active_cookies = get_day_cookies(reader, date_input)
+    print(active_cookies)
+    output = "\n".join(active_cookies) if active_cookies else f"No cookies on {date_input}"
+    print(output)
