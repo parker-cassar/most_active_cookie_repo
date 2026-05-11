@@ -8,13 +8,6 @@ from collections import Counter
 from datetime import date, datetime
 from typing import Iterator, TextIO
 
-parser = argparse.ArgumentParser(description="Most active cookie")
-parser.add_argument("cookie_log", help="Cookie log file") # Positional
-parser.add_argument("-d", "--date", help="Date") # Flag
-
-args = parser.parse_args()
-# print(f"Hello {args.cookie_log} {args.date}")
-
 def _parse_utc_date(date_str: str) -> date:
     try:
         return date.fromisoformat(date_str)  # expects YYYY-MM-DD[time+offeset]
@@ -32,7 +25,7 @@ def build_parser() -> argparse.ArgumentParser:
 def str_to_date(timestamp: str) -> date:
     return datetime.fromisoformat(timestamp).date()
 
-def get_day_cookies(cookie_log_reader : Iterator[list[str]], valid_date : date) -> list[str]:
+def get_most_active_cookies(cookie_log_reader : Iterator[list[str]], valid_date : date) -> list[str]:
     cookie_counter = Counter()
     for cookie, timestamp in cookie_log_reader:
         current_date = str_to_date(timestamp)
@@ -55,7 +48,7 @@ def main():
     args = parser.parse_args()
     with open(args.cookie_log, 'r') as file:
         reader = get_reader(file)
-        active_cookies = get_day_cookies(reader, args.date)
+        active_cookies = get_most_active_cookies(reader, args.date)
         output = "\n".join(active_cookies) if active_cookies else f"No cookies on {args.date}"
     print(output)
     return 0
