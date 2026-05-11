@@ -65,7 +65,7 @@ Current test coverage validates:
 
 Adding new tests:
 
-- Add a CSV fixture under `tests/csv_fixtures/`.
+- Add a CSV fixture under `tests/sample_csv_logs/`.
 - Keep fixture rows in descending timestamp order to match runtime assumptions.
 - Reuse the same two-column shape used by current fixtures: `cookie,timestamp`.
 - Add a tuple to `TEST_CASES_VALID_CSV_INPUT` in `tests/test_most_active_cookie.py`:
@@ -92,7 +92,7 @@ Example:
 
 - `most_active_cookie` - executable script and core logic
 - `tests/test_most_active_cookie.py` - Command line integration-style tests
-- `tests/csv_fixtures/` - fixture files covering normal and edge scenarios
+- `tests/sample_csv_logs/` - CSV files covering normal and edge scenarios
 
 ## Potential Extensions
 
